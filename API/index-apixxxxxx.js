@@ -1,6 +1,5 @@
 const express = require('express');
 const res = require('express/lib/response');
-const req = require('express/lib/request');
 const app = express()
 const port = 3001
 
@@ -17,9 +16,9 @@ app.use(function(req, res, next) {
 var mysql      = require('mysql');
 const { restart } = require('nodemon');
 var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'susu',
-  password : '4321',
+  host     : 'serasat-meme-gallery.eldes.com',
+  user     : 'serasat-meme-gallery',
+  password : 'wk2u1d01if7v',
   database : 'memes_gallery',
   port: 3306
 });
@@ -44,15 +43,9 @@ app.get('/post', (req, res) => {
    
   })
 
-  app.get('/comentario/:id_usuario', (req, res) => {
-
-    const id_usuario = req.params.id_usuario; 
-    console.log(req.params)
-
-    const query = `select P.id_post, P.postagem, P.descricao, P.id_usuario, U.foto_perfil, P.feito_em, C.texto as comentario, C.data_comentario, C.id_usuario, U.nome, U.nome_usuario, usuario.nome as nomepost, usuario.nome_usuario as nikipost from comentario C join post P on P.ID_post = C.ID_post join usuario U on U.ID_usuario = C.ID_usuario join usuario on usuario.ID_usuario = P.ID_usuario WHERE P.id_post = ${id_usuario};`;
-    //const query = `SELECT * FROM comentario, usuario  WHERE comentario.id_post = ${id_usuario} AND usuario.id_usuario = comentario.id_usuario;`;
+  app.get('/comentario', (req, res) => {
   
-    connection.query(query, function (error, results, fields) {
+    connection.query('select P.id_post as ID, P.postagem, C.texto as comentario, C.data_comentario, C.id_usuario, U.nome, U.nome_usuario from comentario C join post P on P.ID_post = C.ID_post join usuario U on U.ID_usuario = C.ID_usuario;', function (error, results, fields) {
       if (error) throw error;
       res.send(results);
     });
@@ -64,28 +57,6 @@ app.get('/post', (req, res) => {
 app.get('/teste', (req, res) => {
     res.send('<h1> Teste 1, 2, 3... <h1>')
 })
-
-app.post('/autentica', (req, res) => {
-
-  const nome_usuario = req.body.nome;
-  const senha = req.body.senha;
-  
-  const query = `
-       SELECT * FROM usuario WHERE nome_usuario = "${nome_usuario}" and senha = "${senha}";
-        `;
-  
-     
-    connection.query ( query, function (error, results, fields) {
-      if (error) {
-        res.status(500)
-        res.send(error)
-      }
-      res.send(results);
-    });
-     
-  })
-
-
 
 {/* postagem cadastro */}
 
